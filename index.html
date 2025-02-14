@@ -854,48 +854,7 @@
                     window.location.href = "error.html"; // Redirect to 404 page if file is missing
                 }
             });
-
-            // console.log("Redirecting to:", url); // Should appear in console
-            // window.location.href = url;
-
-            };
-
-    // weeks.forEach(week => {
-    // const weekRow = document.createElement('div');
-    // weekRow.className = `week-row ${week.isCurrentWeek ? 'current-week' : ''}`;
-    
-    // const weekInfo = document.createElement('div');
-    // weekInfo.className = 'week-info';
-    
-    // const weekNumber = document.createElement('div');
-    // weekNumber.className = 'week-number';
-    // weekNumber.textContent = `Week ${week.weekNumber}`;
-    
-    // const dateRange = document.createElement('div');
-    // dateRange.className = 'date-range';
-    // dateRange.textContent = `${formatDate(week.start)} - ${formatDate(week.end)}`;
-    
-    // const viewButton = document.createElement('button');
-    // viewButton.className = 'view-week-btn';
-    // viewButton.textContent = 'View Week Details';
-    
-    // viewButton.onclick = () => {
-    //     const year = week.start.getFullYear();
-    //     const weekNumber = getISOWeekNumber(week.start);
-    //     const url = `weekly_notes/${year}/week_${weekNumber}_${year}.html`;
-        
-    //     // First try to navigate to the URL
-    //     const newWindow = window.open(url, '_self');
-        
-    //     // Add a small delay to check if the page loads
-    //     setTimeout(() => {
-    //         // If we're still on the same page or the window is null, redirect to error
-    //         if (!newWindow || newWindow.closed || newWindow.closed === undefined) {
-    //             window.location.href = 'error.html';
-    //         }
-    //     }, 10000);
-    // };
-
+        };
 
 
             weekInfo.appendChild(weekNumber);
@@ -913,9 +872,9 @@
         updateCalendar();
     }
 
-    // Initialize and update calendar
-    initializeNavigationControls();
-    updateCalendar();
+        // Initialize and update calendar
+        initializeNavigationControls();
+        updateCalendar();
     </script>
 </body>
 </html>
