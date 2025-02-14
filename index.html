@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AK Weekly Journal</title>
+    <style>
+        :root[data-theme="dark"] {
+            --bg-primary: #1a1b25;
+            --bg-secondary: #22243c;
+            --bg-tertiary: #2a2c4a;
+            --text-primary: #ffffff;
+            --text-secondary: #b4b8d8;
+            --accent-primary: #4f9eff;
+            --accent-secondary: #70a8ff;
+            --border-color: #2f3153;
+            --card-gradient: linear-gradient(45deg, #2a2c4a, #32365c);
+            --header-gradient: linear-gradient(180deg, #2a2c4a 0%, #22243c 100%);
+            --button-gradient: linear-gradient(45deg, #3366cc, #5c8ee6);
+            --button-hover: linear-gradient(45deg, #2952a3, #4b7acc);
+        }
+
+        :root[data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f0f2f5;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --accent-primary: #3366cc;
+            --accent-secondary: #4f9eff;
+            --border-color: #e0e0e0;
+            --card-gradient: linear-gradient(45deg, #f8f9fa, #ffffff);
+            --header-gradient: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+            --button-gradient: linear-gradient(45deg, #4f9eff, #73b4ff);
+            --button-hover: linear-gradient(45deg, #3366cc, #5c8ee6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Add new title styles */
+        .main-title {
+            text-align: center;
+            margin: 40px 0;
+            opacity: 0;
+            animation: titleFadeIn 1.2s ease-out forwards;
+        }
+
+        .main-title h1 {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--accent-primary);
+            margin: 0;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(79, 158, 255, 0.3);
+            position: relative;
+            display: inline-block;
+        }
+
+        .main-title h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: var(--accent-secondary);
+            animation: lineExpand 1s ease-out 0.8s forwards;
+            border-radius: 2px;
+        }
+
+        @keyframes titleFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes lineExpand {
+            0% {
+                width: 0;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            opacity: 0;
+            animation: fadeSlideIn 0.8s ease-out forwards;
+        }
+
+        /*.info-section {
+            width: 100%;
+            padding: 30px;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            border-radius: 12px;
+        }*/
+        .info-section {
+            width: 100%;
+            padding: 30px;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            border-radius: 12px;
+            opacity: 0;
+            animation: scaleIn 0.8s ease-out 0.4s forwards;
+        }
+
+        /*.calendar-section {
+            width: 100%;
+            padding: 30px;
+            background-color: var(--bg-primary);
+            border-radius: 12px;
+        }*/
+        .calendar-section {
+            width: 100%;
+            padding: 30px;
+            background-color: var(--bg-primary);
+            border-radius: 12px;
+            opacity: 0;
+            animation: scaleIn 0.8s ease-out 0.6s forwards;
+        }
+
+       /* .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: var(--button-gradient);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }*/
+
+        .theme-toggle {
+            animation: slideFromLeft 0.6s ease-out 0.3s forwards;
+            opacity: 0;
+        }
+
+        .theme-toggle:hover {
+            background: var(--button-hover);
+        }
+
+        .theme-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .info-panel {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /*.section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }*/
+        .section {
+            opacity: 0;
+            animation: fadeSlideIn 0.6s ease-out forwards;
+        }
+
+                .section:nth-child(1) { animation-delay: 0.6s; }
+        .section:nth-child(2) { animation-delay: 0.8s; }
+        .section:nth-child(3) { animation-delay: 1s; }
+        .section:nth-child(4) { animation-delay: 1.2s; }
+
+        .takeaway-card {
+            opacity: 0;
+            animation: scaleIn 0.6s ease-out forwards;
+        }
+
+        .takeaway-card:nth-child(1) { animation-delay: 1.4s; }
+        .takeaway-card:nth-child(2) { animation-delay: 1.6s; }
+        .takeaway-card:nth-child(3) { animation-delay: 1.8s; }
+
+        .week-row {
+            opacity: 0;
+            animation: fadeSlideIn 0.5s ease-out forwards;
+        }
+
+        /* Dynamically delay week row animations */
+        .week-row:nth-child(1) { animation-delay: 0.8s; }
+        .week-row:nth-child(2) { animation-delay: 0.9s; }
+        .week-row:nth-child(3) { animation-delay: 1s; }
+        .week-row:nth-child(4) { animation-delay: 1.1s; }
+        .week-row:nth-child(5) { animation-delay: 1.2s; }
+        .week-row:nth-child(6) { animation-delay: 1.3s; }
+
+        .profile-image-container {
+            opacity: 0;
+            animation: scaleIn 0.8s ease-out 0.7s forwards;
+        }
+
+        .navigation-controls {
+            opacity: 0;
+            animation: fadeSlideIn 0.6s ease-out 1s forwards;
+        }
+
+        /* Add a subtle transition for interactive elements */
+        .week-row:hover {
+            transform: translateX(8px);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: var(--accent-secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: "→";
+            color: var(--accent-primary);
+        }
+
+        .section-content {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 16px;
+            text-align: justify;
+        }
+
+        .about-section {
+            display: flex;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .profile-image-container {
+            flex-shrink: 0;
+            width: 200px;
+            height: 200px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 3px solid var(--accent-primary);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-image:hover {
+            transform: scale(1.05);
+        }
+
+        .about-content {
+            flex: 1;
+        }
+
+        .takeaway-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .takeaway-card {
+            background: var(--card-gradient);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .takeaway-card h4 {
+            color: var(--accent-secondary);
+            margin-bottom: 10px;
+        }
+
+        .calendar-container {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            padding: 25px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--header-gradient);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .calendar-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .navigation-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .nav-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        select {
+            padding: 8px 12px;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        select:hover {
+            border-color: var(--accent-primary);
+        }
+
+        button {
+            padding: 8px 16px;
+            background: var(--button-gradient);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: var(--button-hover);
+            transform: translateY(-2px);
+        }
+
+        .week-row {
+            display: flex;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            border-radius: 10px;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-tertiary);
+            transition: all 0.3s ease;
+        }
+
+        .week-row:hover {
+            background-color: var(--bg-secondary);
+            transform: translateX(8px);
+        }
+
+        .week-info {
+            flex: 1;
+        }
+
+        .week-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--accent-secondary);
+            margin-bottom: 8px;
+        }
+
+        .date-range {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .current-week {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--accent-primary);
+        }
+
+
+        /*@media (max-width: 1024px) {
+            .page-container {
+                padding: 10px;
+            }
+
+            .info-section, .calendar-section {
+                padding: 20px;
+            }
+        }*/
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <span class="theme-icon">🌙</span>
+        <span class="theme-text">Dark Mode</span>
+    </button>
+
+    <div class="page-container">
+
+        <div class="main-title">
+            <h1>AK Weekly Journal</h1>
+        </div>
+        <!-- Info Section -->
+        <section class="info-section">
+            <div class="info-panel">
+                <div class="section">
+                    <h2 class="section-title">About Me</h2>
+                    <div class="about-section">
+                        <div class="profile-image-container">
+                            <img src="images/profile_pic.jpg" alt="Profile Picture" class="profile-image">
+                        </div>
+                        <div class="about-content">
+                            <div class="section-content">
+                                I maintain a structured weekly tracker to monitor various aspects of my life, including daily activities, fitness, and technical learning. This tracker helps me stay disciplined and consistent by logging key metrics such as time spend on studies, work, walking time, and other fitness parameters. Additionally, I track my learning progress in AI/ML, networking, and Linux Kernel, ensuring steady improvement in my technical expertise. By regularly reviewing my data, I analyze trends, optimize my routines, and make data-driven decisions to enhance productivity, health, and personal growth.
+                                I'm a dedicated individual tracking my personal and professional growth through this weekly journal. With a passion for continuous improvement, I document my experiences, learnings, and reflections to build a comprehensive record of my journey.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">About AK Weekly Journal</h2>
+                    <div class="section-content">
+                        This digital journal serves as a structured way to document weekly progress, insights, and milestones across both personal and professional domains. Each week is carefully documented with detailed notes, creating a comprehensive record of growth and learning. This systematic approach helps me to identify patterns in productivity, challenges faced, and strategies that yield the best results.
+
+                        The journal's organization follows a clear weekly structure, making it easy to track progress over time and spot trends in personal development. Through consistent documentation of daily achievements, setbacks, and lessons learned, it becomes possible to maintain accountability and make data-driven decisions about future goals and priorities.
+
+                        The intuitive calendar interface provides seamless navigation through different time periods, allowing for both detailed weekly reviews and broader monthly or quarterly analyses. This temporal flexibility helps in understanding both short-term progress and long-term growth trajectories. Whether I'm looking to review last week's accomplishments or analyze trends from the past year, the navigation system makes it simple to access and reflect on your journey.
+
+                        Beyond just tracking, this journal serves as a personal knowledge base, capturing valuable insights that might otherwise be forgotten. It's particularly useful during planning for goals and moments of reflection when I need to assess my growth trajectory and adjust my path forward.
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Contents</h2>
+                    <div class="section-content">
+                        Each weekly entry contains:
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Weekly achievements and milestones</li>
+                            <li>Learning opportunities and challenges</li>
+                            <li>Personal reflections and insights</li>
+                            <li>Goals and plans for upcoming weeks</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Key Takeaways</h2>
+                    <div class="takeaway-list">
+                        <div class="takeaway-card">
+                            <h4>Consistency Matters</h4>
+                            <p>Regular documentation helps build a habit of reflection and mindful progress.</p>
+                        </div>
+                        <div class="takeaway-card">
+                            <h4>Track Growth</h4>
+                            <p>Monitoring progress helps identify patterns and areas for improvement.</p>
+                        </div>
+                        <div class="takeaway-card">
+                            <h4>Learn & Adapt</h4>
+                            <p>Weekly reflections enable quick adjustments and better decision-making.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calendar Section -->
+        <section class="calendar-section">
+            <div class="calendar-container">
+                <div class="header">
+                    <div class="calendar-title" id="calendar-title"></div>
+                    <div class="navigation-controls">
+                        <div class="nav-group">
+                            <span class="nav-label">Year:</span>
+                            <select id="yearSelect"></select>
+                        </div>
+                        <div class="nav-group">
+                            <span class="nav-label">Month:</span>
+                            <select id="monthSelect"></select>
+                        </div>
+                        <div class="nav-group">
+                            <span class="nav-label">Week:</span>
+                            <select id="weekSelect"></select>
+                        </div>
+                        <div class="nav-group">
+                            <button onclick="goToToday()">Today</button>
+                            <button onclick="navigate(-1)">Previous Month</button>
+                            <button onclick="navigate(1)">Next Month</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="calendar-content" id="calendar-content"></div>
+            </div>
+        </section>
+    </div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+        console.log("DOM fully loaded"); // Debugging step
+
+        document.querySelectorAll(".view-week-btn").forEach((button) => {
+            button.addEventListener("click", async (event) => {
+            console.log("Button clicked!"); // Check if event fires
+
+                const weekRow = event.target.closest(".week-row");
+                if (!weekRow) {
+                    console.error("No parent week-row found!");
+                    return;
+                }
+
+                const year = new Date().getFullYear(); // Adjust this based on your logic
+                // const weekNumber = weekRow.getAttribute("data-week"); // Ensure this exists
+                const weekNumber = getWeekNumber()
+
+                if (!weekNumber) {
+                    console.error("Week number not found!");
+                    return;
+                }
+
+                const url = `weekly_notes/${year}/week_${weekNumber}_${year}.html`;
+                console.log("Redirecting to:", url); // Should print the correct filename
+
+                try {
+                    const response = await fetch(url, { method: 'HEAD' });
+                    if (response.ok) {
+                        window.location.href = url;
+                    } else {
+                        console.error("File does not exist:", url);
+                        window.location.href = "error.html";
+                    }
+                } catch (error) {
+                    console.error("Error checking file existence:", error);
+                    window.location.href = "error.html";
+                }
+            });
+        });
+    });
+
+
+    let currentDate = new Date();
+    const startYear = 1999;
+    const endYear = 2200;
+
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        const themeToggle = document.querySelector('.theme-toggle');
+        const isCurrentlyDark = html.getAttribute('data-theme') === 'dark';
+    
+        html.setAttribute('data-theme', isCurrentlyDark ? 'light' : 'dark');
+    
+        const icon = themeToggle.querySelector('.theme-icon');
+        const text = themeToggle.querySelector('.theme-text');
+    
+        if (isCurrentlyDark) {
+            icon.textContent = '☀️';
+            text.textContent = 'Light Mode';
+        } else {
+            icon.textContent = '🌙';
+            text.textContent = 'Dark Mode';
+        }
+    }
+
+    function initializeNavigationControls() {
+        const yearSelect = document.getElementById('yearSelect');
+        const monthSelect = document.getElementById('monthSelect');
+    
+        // Initialize years
+        for (let year = startYear; year <= endYear; year++) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            yearSelect.appendChild(option);
+        }
+        yearSelect.value = currentDate.getFullYear();
+
+        // Initialize months
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+        months.forEach((month, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = month;
+            monthSelect.appendChild(option);
+        });
+        monthSelect.value = currentDate.getMonth();
+
+        // Add event listeners
+        yearSelect.addEventListener('change', updateFromSelects);
+        monthSelect.addEventListener('change', updateFromSelects);
+    }
+
+    function updateWeekSelect(weeks) {
+        const weekSelect = document.getElementById('weekSelect');
+        weekSelect.innerHTML = '';
+    
+        weeks.forEach(week => {
+            const option = document.createElement('option');
+            option.value = week.weekNumber;
+            option.textContent = `Week ${week.weekNumber}: ${formatDate(week.start)} - ${formatDate(week.end)}`;
+            weekSelect.appendChild(option);
+
+            if (week.isCurrentWeek) {
+                option.selected = true;
+            }
+        });
+
+        weekSelect.addEventListener('change', (e) => {
+            const selectedWeek = weeks.find(w => w.weekNumber == e.target.value);
+            if (selectedWeek) {
+                currentDate = new Date(selectedWeek.start);
+                updateCalendar();
+            }
+        });
+    }
+
+    function updateFromSelects() {
+        const year = document.getElementById('yearSelect').value;
+        const month = document.getElementById('monthSelect').value;
+        currentDate = new Date(year, month, 1);
+        updateCalendar();
+    }
+
+    function goToToday() {
+        currentDate = new Date();
+        updateCalendar();
+        document.getElementById('yearSelect').value = currentDate.getFullYear();
+        document.getElementById('monthSelect').value = currentDate.getMonth();
+    }
+
+    function getWeeksInMonth(year, month) {
+        const weeks = [];
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+    
+        const firstWeekStart = new Date(firstDay);
+        firstWeekStart.setDate(firstDay.getDate() - firstDay.getDay());
+
+        const lastWeekEnd = new Date(lastDay);
+        lastWeekEnd.setDate(lastDay.getDate() + (6 - lastDay.getDay()));
+
+        let currentWeek = new Date(firstWeekStart);
+        let weekNumber = 1;
+
+        while (currentWeek <= lastWeekEnd) {
+            const weekStart = new Date(currentWeek);
+            const weekEnd = new Date(currentWeek);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+
+            weeks.push({
+                weekNumber: weekNumber,
+                start: new Date(weekStart),
+                end: new Date(weekEnd),
+                isCurrentWeek: isCurrentWeek(weekStart, weekEnd)
+            });
+
+            currentWeek.setDate(currentWeek.getDate() + 7);
+            weekNumber++;
+        }
+
+        return weeks;
+    }
+
+    function isCurrentWeek(start, end) {
+        const today = new Date();
+        return today >= start && today <= end;
+    }
+
+    function formatDate(date) {
+        return date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric',
+            year: 'numeric'
+        });
+    }
+
+    function getISOWeekNumber(date) {
+        const tempDate = new Date(date);
+        tempDate.setHours(0, 0, 0, 0);
+    
+        // Set to Thursday of current week (ISO week starts on Monday)
+        tempDate.setDate(tempDate.getDate() + 3 - (tempDate.getDay() + 6) % 7);
+    
+        // First Thursday of the year
+        const firstThursday = new Date(tempDate.getFullYear(), 0, 4);
+        firstThursday.setDate(firstThursday.getDate() + 3 - (firstThursday.getDay() + 6) % 7);
+    
+        // Week number calculation
+        const weekNumber = Math.round(((tempDate - firstThursday) / (7 * 24 * 60 * 60 * 1000)) + 1);
+        return weekNumber;
+    }
+
+    function getWeekNumber(date) {
+        const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+        const daysOffset = firstDayOfYear.getDay(); // Get the day of the week for Jan 1st
+        const diff = Math.floor((date - firstDayOfYear + (24 * 60 * 60 * 1000)) / (7 * 24 * 60 * 60 * 1000));
+
+        return diff + 1; // Adding 1 because weeks start from 1
+    }
+
+// function checkFileExists(url) {
+//     return fetch(url, { method: 'HEAD' })
+//         .then(response => response.ok) // Returns true if file exists
+//         .catch(() => false); // Returns false if error occurs
+// }
+
+    async function checkFileExists(url) {
+        try {
+            const response = await fetch(url, { method: 'HEAD' });
+            return response.ok; // Returns true if the file exists
+        } catch (error) {
+            console.error("Error checking file existence:", error);
+            return false; // Returns false if there's an error
+        }
+    }
+
+    function updateCalendar() {
+        const titleElement = document.getElementById('calendar-title');
+        titleElement.textContent = currentDate.toLocaleDateString('en-US', { 
+            month: 'long', 
+            year: 'numeric'
+        });
+
+        const content = document.getElementById('calendar-content');
+        content.innerHTML = '';
+
+        const weeks = getWeeksInMonth(
+            currentDate.getFullYear(),
+            currentDate.getMonth()
+        );
+
+        updateWeekSelect(weeks);
+
+        weeks.forEach(week => {
+            const weekRow = document.createElement('div');
+            weekRow.className = `week-row ${week.isCurrentWeek ? 'current-week' : ''}`;
+
+            const weekInfo = document.createElement('div');
+            weekInfo.className = 'week-info';
+
+            const weekNumber = document.createElement('div');
+            weekNumber.className = 'week-number';
+            weekNumber.textContent = `Week ${week.weekNumber}`;
+
+            const dateRange = document.createElement('div');
+            dateRange.className = 'date-range';
+            dateRange.textContent = `${formatDate(week.start)} - ${formatDate(week.end)}`;
+
+            const viewButton = document.createElement('button');
+            viewButton.className = 'view-week-btn';
+            viewButton.textContent = 'View Week Details';
+
+
+            viewButton.onclick = async () => {
+            const year = week.start.getFullYear();
+            const weekNumber = getISOWeekNumber(week.start);
+            const url = `weekly_notes/${year}/week_${weekNumber}_${year}.html`;
+            console.log("Redirecting to:", url); // Should appear in console
+            setTimeout(10000);
+            checkFileExists(url).then(exists => {
+                if (exists) {
+                    window.location.href = url; // Redirect if file exists
+                } else {
+                    window.location.href = "error.html"; // Redirect to 404 page if file is missing
+                }
+            });
+
+            // console.log("Redirecting to:", url); // Should appear in console
+            // window.location.href = url;
+
+            };
+
+    // weeks.forEach(week => {
+    // const weekRow = document.createElement('div');
+    // weekRow.className = `week-row ${week.isCurrentWeek ? 'current-week' : ''}`;
+    
+    // const weekInfo = document.createElement('div');
+    // weekInfo.className = 'week-info';
+    
+    // const weekNumber = document.createElement('div');
+    // weekNumber.className = 'week-number';
+    // weekNumber.textContent = `Week ${week.weekNumber}`;
+    
+    // const dateRange = document.createElement('div');
+    // dateRange.className = 'date-range';
+    // dateRange.textContent = `${formatDate(week.start)} - ${formatDate(week.end)}`;
+    
+    // const viewButton = document.createElement('button');
+    // viewButton.className = 'view-week-btn';
+    // viewButton.textContent = 'View Week Details';
+    
+    // viewButton.onclick = () => {
+    //     const year = week.start.getFullYear();
+    //     const weekNumber = getISOWeekNumber(week.start);
+    //     const url = `weekly_notes/${year}/week_${weekNumber}_${year}.html`;
+        
+    //     // First try to navigate to the URL
+    //     const newWindow = window.open(url, '_self');
+        
+    //     // Add a small delay to check if the page loads
+    //     setTimeout(() => {
+    //         // If we're still on the same page or the window is null, redirect to error
+    //         if (!newWindow || newWindow.closed || newWindow.closed === undefined) {
+    //             window.location.href = 'error.html';
+    //         }
+    //     }, 10000);
+    // };
+
+
+
+            weekInfo.appendChild(weekNumber);
+            weekInfo.appendChild(dateRange);
+            weekRow.appendChild(weekInfo);
+            weekRow.appendChild(viewButton);
+            content.appendChild(weekRow);
+        });
+    }
+
+    function navigate(direction) {
+        currentDate.setMonth(currentDate.getMonth() + direction);
+        document.getElementById('yearSelect').value = currentDate.getFullYear();
+        document.getElementById('monthSelect').value = currentDate.getMonth();
+        updateCalendar();
+    }
+
+    // Initialize and update calendar
+    initializeNavigationControls();
+    updateCalendar();
+    </script>
+</body>
+</html>
