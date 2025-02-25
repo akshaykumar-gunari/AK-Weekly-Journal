@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AK | Weekly Journal</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        .slideshow-container {
+            position: relative;
+            max-width: 100%;
+            margin: auto;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            aspect-ratio: 16/9;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            padding: 2px;
+            border: 2px solid #334155;
+        }
+
+        /* Decorative frame */
+        .slideshow-frame {
+            position: absolute;
+            inset: 0;
+            border: 4px solid transparent;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 100%) border-box;
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .slideshow-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 0.8rem;
+            overflow: hidden;
+            background: #0f172a;
+        }
+
+        .slides {
+            display: none;
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        .slides figure {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .slides img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 0.5rem;
+            transition: transform 0.3s ease;
+            /* Decorative border for images */
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Handle portrait images */
+        .slides img.portrait {
+            height: 90%;
+            width: auto;
+            max-width: 70%;
+            /* Enhanced styling for portrait mode */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .slides img.landscape {
+            width: 90%;
+            height: auto;
+            max-height: 90%;
+            /* Enhanced styling for landscape mode */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        /* Image glow effect on hover */
+        .slides:hover img {
+            transform: scale(1.02);
+            border-color: rgba(139, 92, 246, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .slides figcaption {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            width: auto;
+            max-width: 85%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            opacity: 0.9;
+        }
+
+        .slides:hover figcaption {
+            opacity: 1;
+            bottom: 20px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Rest of the existing styles with enhancements */
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: auto;
+            padding: 12px 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            user-select: none;
+            background: rgba(15, 23, 42, 0.6);
+            text-decoration: none;
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(3px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .prev {
+            left: 15px;
+        }
+
+        .next {
+            right: 15px;
+        }
+
+        .prev:hover, .next:hover {
+            background-color: rgba(79, 70, 229, 0.8);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .dots-container {
+            text-align: center;
+            padding: 15px 0 5px 0;
+        }
+
+        .dot {
+            cursor: pointer;
+            height: 10px;
+            width: 10px;
+            margin: 0 6px;
+            background-color: #334155;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .active-dot, .dot:hover {
+            background-color: #8b5cf6;
+            transform: scale(1.2);
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.6);
+        }
+
+        .fade {
+            animation-name: fade;
+            animation-duration: 1.5s;
+        }
+
+        @keyframes fade {
+            from {opacity: .4} 
+            to {opacity: 1}
+        }
+
+        /* Enhanced fullscreen overlay */
+        .fullscreen-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .fullscreen-container {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 1rem;
+            padding: 10px;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .fullscreen-image {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 0.5rem;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .fullscreen-caption {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            max-width: 80%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .close-button:hover {
+            color: #8b5cf6;
+            transform: scale(1.1);
+        }
+
+        /* Progress bar for slideshow */
+        .progress-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(51, 65, 85, 0.5);
+            z-index: 10;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #4f46e5, #8b5cf6);
+            border-radius: 0 4px 4px 0;
+            transition: width 0.1s linear;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* Landing Animation Styles */
+        .landing-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 100%);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: curtainFall 1.5s ease-in-out forwards;
+            transform-origin: top;
+        }
+
+        .landing-content {
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease-out 0.5s forwards;
+        }
+
+        .content-wrapper {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out 1.5s forwards;
+        }
+
+        @keyframes curtainFall {
+            0% {
+                clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+            }
+            40% {
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
+            100% {
+                clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .logo-ripple {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ripple {
+            position: absolute;
+            border: 4px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: rippleEffect 2s linear infinite;
+        }
+
+        .ripple:nth-child(2) { animation-delay: 0.5s; }
+        .ripple:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes rippleEffect {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.8;
+            }
+            100% {
+                width: 100px;
+                height: 100px;
+                opacity: 0;
+            }
+        }
+
+        /* Main Content Styles */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 100%);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .date {
+            color: #e2e8f0;
+            font-size: 1.1rem;
+        }
+
+        .summary-card, .card {
+            background: #1e293b;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 1.5rem;
+            border: 1px solid #334155;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: #8b5cf6;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 0.5rem;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activity-list {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: start;
+            gap: 0.2rem;
+            margin-bottom: 0.02rem;
+            color: #e2e8f0;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+        }
+
+        .activity-item:hover {
+            background-color: #2d3748;
+        }
+
+        .activity-item::before {
+            content: "•";
+            color: #8b5cf6;
+            font-size: 1.5rem;
+            line-height: 0.5;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .photo-grid img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #334155;
+        }
+
+        .photo-grid img:hover {
+            transform: scale(1.05);
+            border-color: #8b5cf6;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .chart-container {
+            background: #ffffff;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            height: 420px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #e2e8f0;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .chart-container.animate {
+            animation: slideUpFade 1s ease forwards;
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            color: #4f46e5;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            header {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        a:link {
+            color: green;
+            background-color: transparent;
+            text-decoration: none;
+        }
+
+        a:visited {
+            color: pink;
+            background-color: transparent;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: red;
+            background-color: transparent;
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: yellow;
+            background-color: transparent;
+            text-decoration: underline;
+        }
+
+        figure {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        figcaption {
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Animation Overlay -->
+    <div class="landing-overlay">
+        <div class="landing-content">
+            <div class="logo-ripple">
+                <div class="ripple"></div>
+                <div class="ripple"></div>
+                <div class="ripple"></div>
+                <span style="position: relative; z-index: 2;">AK</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div class="content-wrapper">
+        <div class="container">
+            <header>
+                <h1>AK | Weekly Journal</h1>
+                <div class="date">February 16 - February 22, 2025</div>
+            </header>
+
+            <div class="summary-card">
+                <div class="card-header">
+                    Weekly Snapshot
+                </div>
+                <p align="justify">My week started with travelling to Bangalore. Had office days on Monday through Wednesday. Would travel to office in bus. Had a plan to attend a marriage function of my ex-colleague at Gooty (Andhra Pradesh). Visited some places nearby over the weekend.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">💼</span>
+                    Technical Activities
+                </div>
+                <ul class="activity-list">
+                    <li class="activity-item">Was a bit relaxing week at office. </li>
+                    <li class="activity-item">Hosted the first AK | Weekly Journal for Week - 6 of 2025 (3rd week of February). </li>
+                </ul>
+                <div class="photo-grid">
+                    <!-- <img src="/api/placeholder/150/150" alt="Project board" />
+                    <img src="/api/placeholder/150/150" alt="Team meeting" /> -->
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">📚</span>
+                    Learning & Education
+                </div>
+                <ul class="activity-list">
+                    <li class="activity-item"> <b>M.Tech:</b> Not much happened here.</li>
+                    <li class="activity-item">Continued with the course:  <a href="https://onlinecourses.nptel.ac.in/noc25_ee13/announcements?force=true">Computer Vision and Image Processing</a> </li>
+                    <ul>
+                        <li class="activity-item">Brushing up on some topics on Linear Algebra to get aquainted with this course.</li>
+                    </ul>
+                </ul>
+                <div class="photo-grid">
+                    <!-- <img src="/api/placeholder/150/150" alt="Study notes" /> -->
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">💪</span>
+                    Physical Fitness
+                </div>
+                <ul class="activity-list">
+                    <li class="activity-item">Average of 3km walk on Monday, Tuesday and Wednesday.</li>
+                    <li class="activity-item">Weekend trip to Andhra Pradesh for a marriage.</li>
+                </ul>
+                <div class="photo-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <img src="images/week_7/image_0.jpeg" alt="Food" style="width: 40%; height: 250px; object-fit: cover; border-radius: 0.5rem; margin-bottom: 8px;" />
+                        <span style="color: #e2e8f0; font-size: 0.9rem;">A perfect meal at Karma Foods</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">✈️</span>
+                    Travel & Adventures
+                </div>
+                <ul class="activity-list">
+                    <li class="activity-item">Three days a week travel to office.</li>
+                    <li class="activity-item">Visited Gooty for ex-xolleague's (from AMD) for his marriage. Visited some places like Lepakshi Temple, Yagnati Temple and Belum caves.</li>
+                </ul>
+                <!-- <div class="photo-grid"> -->
+                    <!-- <img src="images/image6_1.jpg" alt="Mantralayam" /> -->
+                    <!-- <figcaption style="text-align: center; margin-top: 8px;">Sri Raghavendra Swamy Temple, Mantralayam</figcaption> -->
+                    <!-- <img src="images/image6_2.jpg" alt="Mantralayam" /> -->
+                <!-- </div> -->
+                <!-- Local video with caption -->
+                <!-- <div style="display: flex; flex-direction: column; align-items: center;">
+                    <video style="width: 100%; height: 250px; object-fit: cover; border-radius: 0.5rem; margin-bottom: 8px;" controls>
+                        <source src="videos/mantralayam.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <span style="color: #e2e8f0; font-size: 0.9rem;">Temple Video Tour</span>
+                </div> -->
+                <!-- <div class="photo-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <img src="images/weekly_6_image_1.jpg" alt="Mantralayam" style="width: 100%; height: 250px; object-fit: cover; border-radius: 0.5rem; margin-bottom: 8px;" />
+                        <span style="color: #e2e8f0; font-size: 0.9rem;">Sri Raghavendra Swamy Temple, Mantralayam</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <img src="images/weekly_6_image_2.jpg" alt="Mantralayam" style="width: 100%; height: 250px; object-fit: cover; border-radius: 0.5rem; margin-bottom: 8px;" />
+                        <span style="color: #e2e8f0; font-size: 0.9rem;">Temple premises.</span>
+                    </div>
+                </div> -->
+
+                <div class="slideshow-container">
+                    <div class="slideshow-frame">
+                    </div>
+                        <div class="slideshow-inner">
+                            <div class="slides fade">
+                                <figure>
+                                    <img src="images/week_7/image_1.jpeg" alt="Sri Yaganti Uma Maheswara Temple" onclick="openFullscreen(this)" onload="checkImageOrientation(this)">
+                                    <figcaption>Sri Yaganti Uma Maheswara Temple, Yaganti, Andhra Pradesh.</figcaption>
+                                </figure>
+                            </div>
+                            <div class="slides fade">
+                                <figure>
+                                    <img src="images/week_7/image_2.jpeg" alt="Lepakshi Temple" onclick="openFullscreen(this)" onload="checkImageOrientation(this)">
+                                    <figcaption>Lepakshi Temple Premises</figcaption>
+                                </figure>
+                            </div>
+                            <div class="slides fade">
+                                <figure>
+                                    <img src="images/week_7/image_3.jpeg" alt="Mantralayam" onclick="openFullscreen(this)" onload="checkImageOrientation(this)">
+                                    <figcaption>Yaganti Temple premises</figcaption>
+                                </figure>
+                            </div>
+                            <div class="slides fade">
+                                <figure>
+                                    <img src="images/week_7/image_4.jpeg" alt="Mantralayam" onclick="openFullscreen(this)" onload="checkImageOrientation(this)">
+                                    <figcaption>Lepakshi Temple premises</figcaption>
+                                </figure>
+                            </div>
+                            <div class="slides fade">
+                                <figure>
+                                    <img src="images/week_7/image_5.jpeg" alt="Mantralayam" onclick="openFullscreen(this)" onload="checkImageOrientation(this)">
+                                    <figcaption>Yaganti Temple premises</figcaption>
+                                </figure>
+                            </div>
+                            <div class="slides fade">
+                                <figure>
+                                    <img src="images/week_7/image_6.jpeg" alt="Mantralayam" onclick="openFullscreen(this)" onload="checkImageOrientation(this)">
+                                    <figcaption>Lepakshi Temple premises</figcaption>
+                                </figure>
+                            </div>
+                            <div class="slides fade">
+                                <figure>
+                                    <img src="images/week_7/image_7.jpeg" alt="Mantralayam" onclick="openFullscreen(this)" onload="checkImageOrientation(this)">
+                                    <figcaption>Lepakshi Temple premises</figcaption>
+                                </figure>
+                            </div>
+                            <div class="slides fade">
+                                <figure>
+                                    <img src="images/week_7/image_8.jpeg" alt="Mantralayam" onclick="openFullscreen(this)" onload="checkImageOrientation(this)">
+                                    <figcaption>Yaganti Temple premises</figcaption>
+                                </figure>
+                            </div>
+                            <div class="slides fade">
+                                <figure>
+                                    <img src="images/week_7/image_9.jpeg" alt="Mantralayam" onclick="openFullscreen(this)" onload="checkImageOrientation(this)">
+                                    <figcaption>Yaganti Temple premises caves</figcaption>
+                                </figure>
+                            </div>
+                            <div class="slides fade">
+                                <figure>
+                                    <img src="images/week_7/image_10.jpeg" alt="Mantralayam" onclick="openFullscreen(this)" onload="checkImageOrientation(this)">
+                                    <figcaption>Yaganti Temple premises caves</figcaption>
+                                </figure>
+                            </div>
+                            <div class="slides fade">
+                                <figure>
+                                    <img src="images/week_7/image_11.jpeg" alt="Mantralayam" onclick="openFullscreen(this)" onload="checkImageOrientation(this)">
+                                    <figcaption>Lepakshi Temple premises</figcaption>
+                                </figure>
+                            </div>
+                            <div class="slides fade">
+                                <figure>
+                                    <img src="images/week_7/image_12.jpeg" alt="Mantralayam" onclick="openFullscreen(this)" onload="checkImageOrientation(this)">
+                                    <figcaption>Lepakshi Temple premises</figcaption>
+                                </figure>
+                            </div>
+
+                            <a class="prev" onclick="changeSlide(-1)">❮</a>
+                            <a class="next" onclick="changeSlide(1)">❯</a>
+        
+                            <div class="progress-container">
+                                <div class="progress-bar" id="slideProgress"></div>
+                            </div>
+                        </div>
+                </div>
+
+                <div class="dots-container">
+                    <span class="dot" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
+                    <span class="dot" onclick="currentSlide(4)"></span>
+                    <span class="dot" onclick="currentSlide(5)"></span>
+                    <span class="dot" onclick="currentSlide(6)"></span>
+                    <span class="dot" onclick="currentSlide(7)"></span>
+                    <span class="dot" onclick="currentSlide(8)"></span>
+                    <span class="dot" onclick="currentSlide(9)"></span>
+                    <span class="dot" onclick="currentSlide(10)"></span>
+                    <span class="dot" onclick="currentSlide(11)"></span>
+                    <span class="dot" onclick="currentSlide(12)"></span>
+                </div>
+
+                <!-- Local video with caption -->
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <video style="width: 40%; height: 550px; object-fit: cover; border-radius: 0.5rem; margin-bottom: 8px;" controls>
+                        <source src="images/week_7/video_1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <span style="color: #e2e8f0; font-size: 0.9rem;">Temple Video Tour</span>
+                </div>
+
+                <!-- Update the fullscreen overlay -->
+                <div class="fullscreen-overlay" onclick="closeFullscreen()">
+                    <span class="close-button">&times;</span>
+                        <div class="fullscreen-container">
+                            <img class="fullscreen-image" src="" alt="Fullscreen view">
+                        <div class="fullscreen-caption"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">Weekly Time Distribution</div>
+                    <canvas id="timeChart" width="450" height="450"></canvas>
+                </div>
+            </div>
+        </div>
+
+    <script>
+
+        let slideIndex = 1;
+        let slideInterval;
+        let progressBar;
+        const slideDuration = 5000; // 3 seconds per slide
+        let slideTimer = 0;
+        let animationFrameId;
+
+        function checkImageOrientation(img) {
+            if (img.naturalHeight > img.naturalWidth) {
+                img.classList.add('portrait');
+                img.classList.remove('landscape');
+            } else {
+                img.classList.add('landscape');
+                img.classList.remove('portrait');
+            }
+        }
+
+        function showSlides(n) {
+            const slides = document.getElementsByClassName("slides");
+            const dots = document.getElementsByClassName("dot");
+            
+            if (n > slides.length) slideIndex = 1;
+            if (n < 1) slideIndex = slides.length;
+        
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+                dots[i].className = dots[i].className.replace(" active-dot", "");
+            }
+        
+            slides[slideIndex-1].style.display = "block";
+            dots[slideIndex-1].className += " active-dot";
+            
+            // Reset progress bar
+            resetProgressBar();
+        }
+
+        function changeSlide(n) {
+            clearInterval(slideInterval);
+            cancelAnimationFrame(animationFrameId);
+            showSlides(slideIndex += n);
+            startSlideshow();
+        }
+
+        function currentSlide(n) {
+            clearInterval(slideInterval);
+            cancelAnimationFrame(animationFrameId);
+            showSlides(slideIndex = n);
+            startSlideshow();
+        }
+
+        function updateProgressBar(timestamp) {
+            if (!slideTimer) slideTimer = timestamp;
+            const elapsed = timestamp - slideTimer;
+            const progress = Math.min(elapsed / slideDuration * 100, 100);
+            
+            progressBar.style.width = `${progress}%`;
+            
+            if (elapsed < slideDuration) {
+                animationFrameId = requestAnimationFrame(updateProgressBar);
+            }
+        }
+
+        function resetProgressBar() {
+            slideTimer = 0;
+            progressBar.style.width = '0%';
+            animationFrameId = requestAnimationFrame(updateProgressBar);
+        }
+
+        function startSlideshow() {
+            slideInterval = setInterval(() => {
+                slideIndex++;
+                showSlides(slideIndex);
+            }, slideDuration);
+        }
+
+        function openFullscreen(img) {
+            const overlay = document.querySelector('.fullscreen-overlay');
+            const fullscreenImg = document.querySelector('.fullscreen-image');
+            const caption = document.querySelector('.fullscreen-caption');
+            
+            fullscreenImg.src = img.src;
+            if (img.naturalHeight > img.naturalWidth) {
+                fullscreenImg.style.maxHeight = '80vh';
+                fullscreenImg.style.maxWidth = '70%';
+            } else {
+                fullscreenImg.style.maxWidth = '100%';
+                fullscreenImg.style.maxHeight = '80vh';
+            }
+            
+            caption.textContent = img.parentElement.querySelector('figcaption').textContent;
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Pause slideshow while in fullscreen
+            clearInterval(slideInterval);
+            cancelAnimationFrame(animationFrameId);
+        }
+
+        function closeFullscreen() {
+            const overlay = document.querySelector('.fullscreen-overlay');
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Resume slideshow
+            resetProgressBar();
+            startSlideshow();
+        }
+
+        // Initialize the slideshow
+        document.addEventListener('DOMContentLoaded', () => {
+            progressBar = document.getElementById('slideProgress');
+            
+            // Check orientation for all images
+            document.querySelectorAll('.slides img').forEach(img => {
+                if (img.complete) {
+                    checkImageOrientation(img);
+                } else {
+                    img.onload = () => checkImageOrientation(img);
+                }
+            });
+            
+            showSlides(slideIndex);
+            startSlideshow();
+        });
+
+        // Pause slideshow when user hovers over it
+        document.querySelector('.slideshow-container').addEventListener('mouseenter', () => {
+            clearInterval(slideInterval);
+            cancelAnimationFrame(animationFrameId);
+            progressBar.style.transition = 'none';
+            progressBar.style.width = progressBar.style.width; // Freeze current width
+        });
+
+        // Resume slideshow when user leaves
+        document.querySelector('.slideshow-container').addEventListener('mouseleave', () => {
+            progressBar.style.transition = 'width 0.1s linear';
+            resetProgressBar();
+            startSlideshow();
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            document.querySelectorAll('.slides img').forEach(img => {
+                checkImageOrientation(img);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+        // Function to check if element is in viewport
+        function isElementInViewport(el) {
+            const rect = el.getBoundingClientRect();
+            return (
+                rect.top >= 0 &&
+                rect.left >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+            );
+        }
+
+        // Chart animation
+        const chartContainer = document.querySelector('.chart-container');
+        let chartAnimated = false;
+
+        function handleScroll() {
+            if (!chartAnimated && isElementInViewport(chartContainer)) {
+                chartContainer.classList.add('animate');
+                initChart();
+                chartAnimated = true;
+                window.removeEventListener('scroll', handleScroll);
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll);
+        handleScroll(); // Check initial state
+
+        function initChart() {
+            const ctx = document.getElementById('timeChart').getContext('2d');
+            // labels: ['Work', 'Learning', 'Travel', 'Physical Activity', 'Mobile Usage', 'Reading Books', 'Sleeping', 'Miscellaneous'],
+            const time_spent = [40, 5, 30 , 2, 5, 2, 56, 10];
+            const total_time = 168; // Total hours in a week
+            const percentage_spent = time_spent.map(time => ((time / total_time) * 100).toFixed(2));
+            const chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Work', 'Learning', 'Travel', 'Physical Activity', 'Mobile Usage', 'Reading Books', 'Sleeping', 'Miscellaneous'],
+                    datasets: [{
+                        data: percentage_spent,
+                        backgroundColor: [
+                            '#4F46E5',
+                            '#10B981',
+                            '#0EA5E9',
+                            '#EC4899',
+                            '#F59E0B',
+                            '#8B5CF6',
+                            '#6366F1',
+                            '#14B8A6'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                color: '#1e293b',
+                                font: {
+                                    size: 12
+                                },
+                                // Add animation to legend items
+                                animation: {
+                                    numbers: {
+                                        type: 'number',
+                                        properties: ['x', 'y', 'width', 'height']
+                                    }
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            },
+                            animation: {
+                                duration: 400,
+                                easing: 'easeOutQuart'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Add hover animation
+            chart.options.hover = {
+                mode: 'nearest',
+                intersect: true,
+                animationDuration: 400
+            };
+        }
+
+        // Remove landing overlay after animation
+        setTimeout(() => {
+            const overlay = document.querySelector('.landing-overlay');
+            overlay.style.display = 'none';
+        }, 2500);
+    });
+    </script>
+</body>
+</html>
